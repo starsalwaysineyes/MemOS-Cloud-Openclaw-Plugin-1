@@ -3,6 +3,7 @@ import {
   buildConfig,
   extractText,
   formatPromptBlock,
+  USER_QUERY_MARKER,
   searchMemory,
 } from "./lib/memos-cloud-api.js";
 
@@ -10,6 +11,7 @@ let lastCaptureTime = 0;
 const conversationCounters = new Map();
 const API_KEY_HELP_URL = "https://memos-dashboard.openmem.net/cn/apikeys/";
 const ENV_FILE_SEARCH_HINTS = ["~/.openclaw/.env", "~/.moltbot/.env", "~/.clawdbot/.env"];
+const USER_QUERY_MARKER = "u\u200bs\u200be\u200br\u200b原\u200b始\u200bq\u200bu\u200be\u200br\u200by\u200b：";
 
 function warnMissingApiKey(log, context) {
   const heading = "[memos-cloud] Missing MEMOS_API_KEY (Token auth)";
@@ -27,6 +29,13 @@ function warnMissingApiKey(log, context) {
       `Get API key: ${API_KEY_HELP_URL}`,
     ].join("\n"),
   );
+}
+
+function stripPrependedPrompt(content) {
+  if (!content) return content;
+  const idx = content.lastIndexOf(USER_QUERY_MARKER);
+  if (idx === -1) return content;
+  return content.slice(idx + USER_QUERY_MARKER.length).trimStart();
 }
 
 function getCounterSuffix(sessionKey) {
@@ -104,6 +113,13 @@ function buildAddMessagePayload(cfg, messages, ctx) {
   return payload;
 }
 
+function stripUserPromptPrefix(text) {
+  if (!text) return "";
+  const markerIndex = text.lastIndexOf(USER_QUERY_MARKER);
+  if (markerIndex < 0) return text;
+  return text.slice(markerIndex + USER_QUERY_MARKER.length).replace(/^\s+/, "");
+}
+
 function pickLastTurnMessages(messages, cfg) {
   const lastUserIndex = messages
     .map((m, idx) => ({ m, idx }))
@@ -119,7 +135,7 @@ function pickLastTurnMessages(messages, cfg) {
   for (const msg of slice) {
     if (!msg || !msg.role) continue;
     if (msg.role === "user") {
-      const content = extractText(msg.content);
+      const content = stripPrependedPrompt(extractText(msg.content));
       if (content) results.push({ role: "user", content: truncate(content, cfg.maxMessageChars) });
       continue;
     }
@@ -137,7 +153,7 @@ function pickFullSessionMessages(messages, cfg) {
   for (const msg of messages) {
     if (!msg || !msg.role) continue;
     if (msg.role === "user") {
-      const content = extractText(msg.content);
+      const content = stripPrependedPrompt(extractText(msg.content));
       if (content) results.push({ role: "user", content: truncate(content, cfg.maxMessageChars) });
     }
     if (msg.role === "assistant" && cfg.includeAssistant) {
