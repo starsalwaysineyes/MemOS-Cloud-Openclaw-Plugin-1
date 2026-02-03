@@ -2,7 +2,8 @@ import {
   addMessage,
   buildConfig,
   extractText,
-  formatContextBlock,
+  formatPromptBlock,
+  USER_QUERY_MARKER,
   searchMemory,
 } from "./lib/memos-cloud-api.js";
 
@@ -27,6 +28,13 @@ function warnMissingApiKey(log, context) {
       `Get API key: ${API_KEY_HELP_URL}`,
     ].join("\n"),
   );
+}
+
+function stripPrependedPrompt(content) {
+  if (!content) return content;
+  const idx = content.lastIndexOf(USER_QUERY_MARKER);
+  if (idx === -1) return content;
+  return content.slice(idx + USER_QUERY_MARKER.length).trimStart();
 }
 
 function getCounterSuffix(sessionKey) {
@@ -119,7 +127,7 @@ function pickLastTurnMessages(messages, cfg) {
   for (const msg of slice) {
     if (!msg || !msg.role) continue;
     if (msg.role === "user") {
-      const content = extractText(msg.content);
+      const content = stripPrependedPrompt(extractText(msg.content));
       if (content) results.push({ role: "user", content: truncate(content, cfg.maxMessageChars) });
       continue;
     }
@@ -137,7 +145,7 @@ function pickFullSessionMessages(messages, cfg) {
   for (const msg of messages) {
     if (!msg || !msg.role) continue;
     if (msg.role === "user") {
-      const content = extractText(msg.content);
+      const content = stripPrependedPrompt(extractText(msg.content));
       if (content) results.push({ role: "user", content: truncate(content, cfg.maxMessageChars) });
     }
     if (msg.role === "assistant" && cfg.includeAssistant) {
@@ -198,11 +206,11 @@ export default {
       try {
         const payload = buildSearchPayload(cfg, event.prompt, ctx);
         const result = await searchMemory(cfg, payload);
-        const contextBlock = formatContextBlock(result, { maxItemChars: 200 });
-        if (!contextBlock) return;
+        const promptBlock = formatPromptBlock(result, { maxItemChars: 200, wrapTagBlocks: true });
+        if (!promptBlock) return;
 
         return {
-          prependContext: `<user_memory_context>\nRelevant memories from MemOS Cloud:\n${contextBlock}\n</user_memory_context>`,
+          prependContext: promptBlock,
         };
       } catch (err) {
         log.warn?.(`[memos-cloud] recall failed: ${String(err)}`);
