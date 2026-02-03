@@ -11,7 +11,6 @@ let lastCaptureTime = 0;
 const conversationCounters = new Map();
 const API_KEY_HELP_URL = "https://memos-dashboard.openmem.net/cn/apikeys/";
 const ENV_FILE_SEARCH_HINTS = ["~/.openclaw/.env", "~/.moltbot/.env", "~/.clawdbot/.env"];
-const USER_QUERY_MARKER = "u\u200bs\u200be\u200br\u200b原\u200b始\u200bq\u200bu\u200be\u200br\u200by\u200b：";
 
 function warnMissingApiKey(log, context) {
   const heading = "[memos-cloud] Missing MEMOS_API_KEY (Token auth)";
@@ -111,13 +110,6 @@ function buildAddMessagePayload(cfg, messages, ctx) {
   payload.async_mode = cfg.asyncMode;
 
   return payload;
-}
-
-function stripUserPromptPrefix(text) {
-  if (!text) return "";
-  const markerIndex = text.lastIndexOf(USER_QUERY_MARKER);
-  if (markerIndex < 0) return text;
-  return text.slice(markerIndex + USER_QUERY_MARKER.length).replace(/^\s+/, "");
 }
 
 function pickLastTurnMessages(messages, cfg) {
