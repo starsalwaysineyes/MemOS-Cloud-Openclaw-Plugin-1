@@ -11,6 +11,7 @@ let lastCaptureTime = 0;
 const conversationCounters = new Map();
 const API_KEY_HELP_URL = "https://memos-dashboard.openmem.net/cn/apikeys/";
 const ENV_FILE_SEARCH_HINTS = ["~/.openclaw/.env", "~/.moltbot/.env", "~/.clawdbot/.env"];
+const MEMOS_SOURCE = "openclaw";
 
 function warnMissingApiKey(log, context) {
   const heading = "[memos-cloud] Missing MEMOS_API_KEY (Token auth)";
@@ -91,6 +92,7 @@ function buildAddMessagePayload(cfg, messages, ctx) {
     user_id: cfg.userId,
     conversation_id: resolveConversationId(cfg, ctx),
     messages,
+    source: MEMOS_SOURCE,
   };
 
   if (cfg.agentId) payload.agent_id = cfg.agentId;
