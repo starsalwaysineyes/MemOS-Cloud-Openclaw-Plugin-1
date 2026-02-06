@@ -30,7 +30,7 @@
         "enum": ["last_turn", "full_session"],
         "default": "last_turn"
       },
-      "maxMessageChars": { "type": "integer", "description": "Max chars per message when adding" },
+      "maxMessageChars": { "type": "integer", "description": "Max chars per message when adding", "default": 20000 },
       "includeAssistant": { "type": "boolean", "default": true },
       "memoryLimitNumber": { "type": "integer", "default": 6 },
       "preferenceLimitNumber": { "type": "integer", "default": 6 },

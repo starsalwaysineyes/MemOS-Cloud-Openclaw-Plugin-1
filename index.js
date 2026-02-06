@@ -63,7 +63,10 @@ function resolveConversationId(cfg, ctx) {
 
 function buildSearchPayload(cfg, prompt, ctx) {
   const queryRaw = `${cfg.queryPrefix || ""}${prompt}`;
-  const query = queryRaw.slice(0, cfg.maxQueryChars || 2000);
+  const query =
+    Number.isFinite(cfg.maxQueryChars) && cfg.maxQueryChars > 0
+      ? queryRaw.slice(0, cfg.maxQueryChars)
+      : queryRaw;
 
   const payload = {
     user_id: cfg.userId,
@@ -209,7 +212,7 @@ export default {
       try {
         const payload = buildSearchPayload(cfg, event.prompt, ctx);
         const result = await searchMemory(cfg, payload);
-        const promptBlock = formatPromptBlock(result, { maxItemChars: 200, wrapTagBlocks: true });
+        const promptBlock = formatPromptBlock(result, { wrapTagBlocks: true });
         if (!promptBlock) return;
 
         return {
