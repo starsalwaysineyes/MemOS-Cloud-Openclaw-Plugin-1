@@ -7,6 +7,7 @@ A minimal OpenClaw lifecycle plugin that **recalls** memories from MemOS Cloud b
 ## Features
 - **Recall**: `before_agent_start` → `/search/memory`
 - **Add**: `agent_end` → `/add/message`
+- **Tool memory support**: captures assistant tool calls + tool results into `add/message`, and injects recalled tool memories into the prompt block
 - Uses **Token** auth (`Authorization: Token <MEMOS_API_KEY>`)
 
 ## Install
@@ -121,7 +122,8 @@ In `plugins.entries.memos-cloud-openclaw-plugin.config`:
   - Formats a MemOS prompt (Role/System/Memory/Skill/Protocols) from `/search/memory` results, then injects via `prependContext`.
 
 - **Add** (`agent_end`)
-  - Builds a `/add/message` request with the **last turn** by default (user + assistant).
+  - Builds a `/add/message` request with the **last turn** by default.
+  - Captures user messages, assistant messages, assistant `tool_calls`, and tool result messages (`role: tool`) so MemOS can extract tool trajectory memories.
   - Sends `messages` with `user_id`, `conversation_id`, and optional `tags/info/agent_id/app_id`.
 
 ## Notes
