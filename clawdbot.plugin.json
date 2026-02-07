@@ -35,7 +35,7 @@
       "memoryLimitNumber": { "type": "integer", "default": 6 },
       "preferenceLimitNumber": { "type": "integer", "default": 6 },
       "includePreference": { "type": "boolean", "default": true },
-      "includeToolMemory": { "type": "boolean", "default": false },
+      "includeToolMemory": { "type": "boolean", "default": true },
       "toolMemoryLimitNumber": { "type": "integer", "default": 6 },
       "filter": { "type": "object", "description": "MemOS search filter" },
       "knowledgebaseIds": { "type": "array", "items": { "type": "string" } },

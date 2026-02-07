@@ -7,7 +7,7 @@ A minimal OpenClaw lifecycle plugin that **recalls** memories from MemOS Cloud b
 ## Features
 - **Recall**: `before_agent_start` → `/search/memory`
 - **Add**: `agent_end` → `/add/message`
-- **Tool memory support**: captures assistant tool calls + tool results into `add/message`, and injects recalled tool memories into the prompt block
+- **Tool memory support**: captures assistant tool calls + tool results into `add/message`, and injects recalled tool memories into the prompt block (recall enabled by default)
 - Uses **Token** auth (`Authorization: Token <MEMOS_API_KEY>`)
 
 ## Install
@@ -108,7 +108,7 @@ In `plugins.entries.memos-cloud-openclaw-plugin.config`:
   "memoryLimitNumber": 6,
   "preferenceLimitNumber": 6,
   "includePreference": true,
-  "includeToolMemory": false,
+  "includeToolMemory": true,
   "toolMemoryLimitNumber": 6,
   "tags": ["openclaw"],
   "asyncMode": true

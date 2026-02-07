@@ -9,7 +9,7 @@
 ## 功能
 - **Recall**：`before_agent_start` → `/search/memory`
 - **Add**：`agent_end` → `/add/message`
-- **工具记忆支持**：`add/message` 中写入 assistant 的 `tool_calls` 与 tool 执行结果，并在召回时把工具记忆注入提示词
+- **工具记忆支持**：`add/message` 中写入 assistant 的 `tool_calls` 与 tool 执行结果，并在召回时把工具记忆注入提示词（默认开启召回）
 - 使用 **Token** 认证（`Authorization: Token <MEMOS_API_KEY>`）
 
 ## 安装
@@ -110,7 +110,7 @@ MEMOS_API_KEY=YOUR_TOKEN
   "memoryLimitNumber": 6,
   "preferenceLimitNumber": 6,
   "includePreference": true,
-  "includeToolMemory": false,
+  "includeToolMemory": true,
   "toolMemoryLimitNumber": 6,
   "tags": ["openclaw"],
   "asyncMode": true
