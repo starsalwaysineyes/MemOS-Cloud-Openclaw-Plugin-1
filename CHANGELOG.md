@@ -8,10 +8,18 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ## [Unreleased]
 
 ### Added
-- Capability matrix and versioning/upgrade guidance in `README.md` and `README_ZH.md`.
-- `scripts/bump-version.mjs` to bump versions in both manifest files in one step.
-- NPM scripts for patch/minor/major bump workflows.
-- This `CHANGELOG.md` baseline file.
+- _TBD_
+
+## [0.2.0] - 2026-02-25
+
+### Added
+- `CHANGELOG.md` baseline and release tracking.
+- `scripts/bump-version.mjs` to bump `package.json` and `openclaw.plugin.json` versions together.
+- NPM helper scripts in `package.json` for patch/minor/major bump.
+
+### Changed
+- Simplified `README.md` and `README_ZH.md` by removing capability matrix and versioning guide sections.
+- Kept only GitHub-source upgrade commands for end users (latest and pinned tag examples).
 
 ## [0.1.0] - 2026-02-24
 

@@ -128,58 +128,21 @@ In `plugins.entries.memos-cloud-openclaw-plugin.config`:
 - `conversation_id` defaults to OpenClaw `sessionKey` (unless `conversationId` is provided). **TODO**: consider binding to OpenClaw `sessionId` directly.
 - Optional **prefix/suffix** via env or config; `conversationSuffixMode=counter` increments on `/new` (requires `hooks.internal.enabled`).
 
-## Capability Matrix
+## Upgrade (GitHub source)
 
-| Area | Current capability | Main knobs |
-|---|---|---|
-| Recall | Search memory before each run and inject prompt block via `prependContext` | `recallEnabled`, `recallGlobal`, `queryPrefix`, `maxQueryChars`, `memoryLimitNumber`, `includePreference`, `preferenceLimitNumber`, `includeToolMemory`, `toolMemoryLimitNumber`, `filter`, `knowledgebaseIds` |
-| Add | Persist conversation back to MemOS after successful run | `addEnabled`, `captureStrategy` (`last_turn`/`full_session`), `includeAssistant`, `maxMessageChars`, `tags`, `info`, `agentId`, `appId`, `allowPublic`, `allowKnowledgebaseIds`, `asyncMode` |
-| Conversation routing | Stable conversation IDs with optional segmentation | `conversationId`, `conversationIdPrefix`, `conversationIdSuffix`, `conversationSuffixMode`, `resetOnNew` |
-| Reliability | Built-in timeout/retry + optional throttle for write path | `timeoutMs`, `retries`, `throttleMs` |
-| Secrets/config source | Config + env file fallback with deterministic priority | plugin config + `~/.openclaw/.env` → `~/.moltbot/.env` → `~/.clawdbot/.env` |
+This plugin is currently distributed from GitHub source (not npm package).
 
-## Versioning & Upgrade Guide
-
-### 1) Versioning policy
-
-This plugin follows semantic versioning:
-
-- **PATCH** (`x.y.Z`): bug fixes and internal improvements, no intentional breaking config change
-- **MINOR** (`x.Y.z`): backward-compatible features or new optional config fields
-- **MAJOR** (`X.y.z`): breaking behavior/config/schema changes
-
-### 2) Maintainer release checklist
-
-When publishing a new plugin version:
-
-1. Update code and (if needed) `configSchema` in `openclaw.plugin.json`.
-2. Keep the two version fields in sync:
-   - `package.json` → `version`
-   - `openclaw.plugin.json` → `version`
-3. Update README examples and `CHANGELOG.md` entries for the release.
-4. Bump version with the bundled script:
-   - `node scripts/bump-version.mjs patch --dry-run`
-   - `node scripts/bump-version.mjs patch`
-   - or `npm run bump:minor` / `npm run bump:major`
-5. Commit changes and tag release (recommended `vX.Y.Z`).
-6. Publish release notes with at least:
-   - changed capabilities
-   - compatibility impact
-   - required migration steps (if any)
-
-### 3) User upgrade steps
-
-If the plugin was installed via npm specs, update installed plugins:
-
-```bash
-openclaw plugins update
-openclaw gateway restart
-```
-
-If the plugin was installed from GitHub source, reinstall latest source:
+Upgrade to latest:
 
 ```bash
 openclaw plugins install github:MemTensor/MemOS-Cloud-OpenClaw-Plugin
+openclaw gateway restart
+```
+
+Install a specific release tag (example: `v0.2.0`):
+
+```bash
+openclaw plugins install github:MemTensor/MemOS-Cloud-OpenClaw-Plugin#v0.2.0
 openclaw gateway restart
 ```
 
@@ -188,14 +151,6 @@ After restart, validate in logs that:
 - plugin loads successfully
 - no `Missing MEMOS_API_KEY` warning (unless expected)
 - recall/add hooks execute as intended
-
-### 4) Breaking-change safety checklist
-
-Before upgrading across major versions, verify:
-
-- your existing plugin config keys are still valid
-- env strategy (`MEMOS_*`) still matches your deployment
-- `hooks.internal.enabled` is set if you rely on `conversationSuffixMode=counter` + `resetOnNew`
 
 ## Acknowledgements
 - Thanks to @anatolykoptev (Contributor) — LinkedIn: https://www.linkedin.com/in/koptev?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app

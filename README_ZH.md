@@ -135,58 +135,21 @@ MEMOS_API_KEY=YOUR_TOKEN
 - 未显式指定 `conversation_id` 时，默认使用 OpenClaw `sessionKey`。**TODO**：后续考虑直接绑定 OpenClaw `sessionId`。
 - 可配置前后缀；`conversationSuffixMode=counter` 时会在 `/new` 递增（需 `hooks.internal.enabled`）。
 
-## 能力矩阵
+## 升级步骤（GitHub 源）
 
-| 领域 | 当前能力 | 主要配置项 |
-|---|---|---|
-| Recall 召回 | 每轮前检索 MemOS 记忆并通过 `prependContext` 注入提示词 | `recallEnabled`、`recallGlobal`、`queryPrefix`、`maxQueryChars`、`memoryLimitNumber`、`includePreference`、`preferenceLimitNumber`、`includeToolMemory`、`toolMemoryLimitNumber`、`filter`、`knowledgebaseIds` |
-| Add 写回 | 每轮成功结束后写回对话到 MemOS | `addEnabled`、`captureStrategy`（`last_turn`/`full_session`）、`includeAssistant`、`maxMessageChars`、`tags`、`info`、`agentId`、`appId`、`allowPublic`、`allowKnowledgebaseIds`、`asyncMode` |
-| 会话路由 | 可稳定生成 conversation_id，并支持分段策略 | `conversationId`、`conversationIdPrefix`、`conversationIdSuffix`、`conversationSuffixMode`、`resetOnNew` |
-| 稳定性 | 内置超时/重试，写回支持节流 | `timeoutMs`、`retries`、`throttleMs` |
-| 配置来源 | 插件配置 + env 文件优先级兜底 | 插件 config + `~/.openclaw/.env` → `~/.moltbot/.env` → `~/.clawdbot/.env` |
+目前该插件通过 GitHub 源分发（不是 npm 包）。
 
-## 版本更新指南
-
-### 1）版本号策略
-
-本插件采用语义化版本（SemVer）：
-
-- **PATCH**（`x.y.Z`）：修复 bug / 内部优化，不应引入破坏性配置变化
-- **MINOR**（`x.Y.z`）：向后兼容的新能力或新增可选配置
-- **MAJOR**（`X.y.z`）：存在破坏性行为或配置/Schema 变化
-
-### 2）维护者发版清单
-
-发布新版本时建议按以下顺序：
-
-1. 更新代码；若新增能力，同步更新 `openclaw.plugin.json` 的 `configSchema`。
-2. 保持两个版本号一致：
-   - `package.json` 的 `version`
-   - `openclaw.plugin.json` 的 `version`
-3. README 与 `CHANGELOG.md` 同步补齐本次版本的变更说明。
-4. 使用仓库内脚本做版本 bump：
-   - `node scripts/bump-version.mjs patch --dry-run`
-   - `node scripts/bump-version.mjs patch`
-   - 或 `npm run bump:minor` / `npm run bump:major`
-5. 提交并打 tag（建议 `vX.Y.Z`）。
-6. 发布变更说明，至少包含：
-   - 能力变更点
-   - 兼容性影响
-   - 迁移步骤（若有）
-
-### 3）使用者升级步骤
-
-如果插件是通过 npm 规格安装，可直接更新已安装插件：
-
-```bash
-openclaw plugins update
-openclaw gateway restart
-```
-
-如果插件是通过 GitHub 源安装，建议重新安装最新版：
+升级到最新版本：
 
 ```bash
 openclaw plugins install github:MemTensor/MemOS-Cloud-OpenClaw-Plugin
+openclaw gateway restart
+```
+
+安装指定版本标签（示例：`v0.2.0`）：
+
+```bash
+openclaw plugins install github:MemTensor/MemOS-Cloud-OpenClaw-Plugin#v0.2.0
 openclaw gateway restart
 ```
 
@@ -195,12 +158,6 @@ openclaw gateway restart
 - 插件是否成功加载
 - 是否出现 `Missing MEMOS_API_KEY`（若不预期应消除）
 - recall/add hook 是否按预期执行
-
-### 4）跨大版本升级前检查
-
-- 现有插件配置项是否仍然有效
-- `MEMOS_*` 的环境变量策略是否与当前部署一致
-- 若使用 `conversationSuffixMode=counter` + `resetOnNew`，确认 `hooks.internal.enabled=true`
 
 ## 致谢
 - 感谢 @anatolykoptev（Contributor）— 领英：https://www.linkedin.com/in/koptev?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app
