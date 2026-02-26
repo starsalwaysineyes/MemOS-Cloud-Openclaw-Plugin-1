@@ -9,6 +9,7 @@
 ## 功能
 - **Recall**：`before_agent_start` → `/search/memory`
 - **Add**：`agent_end` → `/add/message`
+- **工具记忆支持**：`add/message` 中写入 assistant 的 `tool_calls` 与 tool 执行结果，并在召回时把工具记忆注入提示词（默认开启召回）
 - 使用 **Token** 认证（`Authorization: Token <MEMOS_API_KEY>`）
 
 ## 安装
@@ -109,7 +110,7 @@ MEMOS_API_KEY=YOUR_TOKEN
   "memoryLimitNumber": 6,
   "preferenceLimitNumber": 6,
   "includePreference": true,
-  "includeToolMemory": false,
+  "includeToolMemory": true,
   "toolMemoryLimitNumber": 6,
   "tags": ["openclaw"],
   "asyncMode": true
@@ -125,7 +126,8 @@ MEMOS_API_KEY=YOUR_TOKEN
 - 使用 `/search/memory` 结果按 MemOS 提示词模板（Role/System/Memory/Skill/Protocols）拼装，并通过 `prependContext` 注入
 
 ### 2) 添加（agent_end）
-- 默认只写**最后一轮**（user + assistant）
+- 默认写入**最后一轮**
+- 会将 user 消息、assistant 消息、assistant 的 `tool_calls` 以及 tool 结果（`role: tool`）一并写入，便于 MemOS 抽取工具轨迹记忆
 - 构造 `/add/message` 请求：
   - `user_id`、`conversation_id`
   - `messages` 列表
